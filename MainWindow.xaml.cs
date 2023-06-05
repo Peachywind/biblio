@@ -1,28 +1,74 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Win32;
+using Lib;
 
-namespace CreateBiblio
+namespace WpfLib
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void OpenFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string filePath = openFileDialog.FileName;
+                string fileExtension = Path.GetExtension(filePath);
+
+                if (fileExtension == ".txt")
+                {
+                    OpenTextFile(filePath);
+                }
+                else if (fileExtension == ".json")
+                {
+                    DeserializeJsonFile(filePath);
+                }
+            }
+        }
+
+        private void OpenTextFile(string filePath)
+        {
+            string fileContent = File.ReadAllText(filePath);
+            TextBox.Text = fileContent;
+        }
+
+        private void DeserializeJsonFile(string filePath)
+        {
+            string jsonContent = File.ReadAllText(filePath);
+            try
+            {
+                dynamic deserializedObject = ImmitationWork.Deserialize<dynamic>(jsonContent);
+                TextBox.Text = deserializedObject.ToString();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error deserializing JSON file: " + ex.Message);
+            }
+        }
+
+        private void SaveJsonButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "JSON files (*.json)|*.json";
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                string filePath = saveFileDialog.FileName;
+                string jsonContent = TextBox.Text;
+
+                
+                    ImmitationWork.Serialize(jsonContent, filePath);
+                    MessageBox.Show("JSON file saved successfully.");
+                
+                
+            }
         }
     }
 }

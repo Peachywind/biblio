@@ -6,10 +6,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace CreateBiblio
+namespace WpfLib
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    /// Логика взаимодействия для App.xaml
     /// </summary>
     public partial class App : Application
     {
